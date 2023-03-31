@@ -3,14 +3,14 @@ return unless RT::Extension::BecomeUser::userHasAppropriateRight($session{Curren
 if (ref $Collection eq 'RT::Users' ){
     push @$Format, {
         attribute => 'become user', 
-        title     => 'become user',
+        title     => 'Become User',
         output    => [
             '<a href="',
             '__WebPath__',
             '/BecomeUser.html?id=',
             '__id__',
             '">',
-            'become',
+            'Become',
             '</a>',
         ],
     last_attribute => 'Status',
