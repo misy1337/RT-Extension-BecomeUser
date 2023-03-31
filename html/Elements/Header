@@ -2,7 +2,7 @@
 %#
 %# COPYRIGHT:
 %#
-%# This software is Copyright (c) 1996-2017 Best Practical Solutions, LLC
+%# This software is Copyright (c) 1996-2022 Best Practical Solutions, LLC
 %#                                          <sales@bestpractical.com>
 %#
 %# (Except where explicitly superseded by other copyright notices)
@@ -96,8 +96,20 @@
 
 <& /Elements/Framekiller &>
 
+% $m->callback( CallbackName => 'EndOfHead', ARGSRef => \%ARGS );
+
+% $m->callback(
+%    CallbackName => 'BackToOriginalAccount',
+% );
+
+
 </head>
-  <body class="<% join( ' ',@{$ARGS{'BodyClass'}}) %>" <% $id && qq[id="comp-$id"] |n %>>
+  <body class="<% join( ' ',@{$ARGS{'BodyClass'}}, RT->Config->Get('WebDefaultStylesheet', $session{CurrentUser}) =~ /-dark$/ ? 'darkmode' : ()) %>" <% $id && qq[id="comp-$id"] |n %>>
+    <div class="main-container">
+% # The close div for this is in PageLayout right before the rt body div
+% if ( $ShowBar || $ShowTitle ) {
+<div id='rt-header-container'>
+% }
 
 % if ($ShowBar) {
 <& /Elements/Logo, %ARGS &>
@@ -109,10 +121,6 @@
 % if ($ShowTitle) {
 <div id="header"><h1><% $Title %></h1></div>
 % }
-
-% $m->callback(
-%    CallbackName => 'BackToOriginalAccount',
-% );
 
 
 <%INIT>
@@ -146,6 +154,7 @@ else {
       RT::Interface::Web::SquishedCSS( $style )->Key;
     @css_files = "/NoAuth/css/$style/squished-$key.css";
 }
+$m->callback( CallbackName => "MassageCSSFiles", CSSFiles => \@css_files, ARGSRef => \%ARGS );
 
 # We use BodyClass in its $ARGS form so that callbacks have a chance to
 # massage it
